@@ -3,7 +3,7 @@
 > **Esercitazione interattiva per la Giornata 1 del percorso formativo "L'intelligenza artificiale nella Pubblica Amministrazione".**
 > Un'unica web-app in tre fasi per mappare — senza giudicare — gli strumenti di IA già in uso negli uffici pubblici: autorizzati o spontanei, con quali account, per quali attività.
 
-🔗 **Demo online:** *[(aggiungi qui il link a GitHub Pages dopo la pubblicazione)](https://gigicogo.github.io/Mappatura-strumenti-AI-dell-Ente/)*
+🔗 **Demo online:** *https://gigicogo.github.io/Mappatura-strumenti-AI-dell-Ente/ *
 
 ---
 
