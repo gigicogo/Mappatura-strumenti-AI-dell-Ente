@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shadow AI · La mappa dell'ufficio</title>
+<style>
+  :root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:#1e293b; background:#f8fafc; }
+  * { box-sizing:border-box; }
+  body { margin:0; }
+  header { background:#fff; border-bottom:1px solid #e2e8f0; }
+  .wrap { max-width:880px; margin:0 auto; padding:0 16px; }
+  .chip { display:inline-block; background:#1e293b; color:#fff; font-size:12px; font-weight:600; padding:4px 12px; border-radius:999px; }
+  .meta { color:#64748b; font-size:12px; font-weight:500; margin-left:8px; }
+  h1 { font-size:26px; font-weight:800; letter-spacing:-.02em; margin:10px 0 4px; }
+  .sub { color:#475569; font-size:14px; margin:0 0 18px; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; padding-bottom:18px; }
+  nav button { border:1px solid #cbd5e1; background:#fff; color:#334155; border-radius:12px; padding:8px 14px; text-align:left; cursor:pointer; font-family:inherit; }
+  nav button .n { display:block; font-size:13px; font-weight:700; }
+  nav button .t { display:block; font-size:11px; color:#64748b; }
+  nav button.active { border-color:#1e293b; background:#1e293b; color:#fff; }
+  nav button.active .t { color:#cbd5e1; }
+  main { padding:24px 0 48px; }
+  .fase { display:none; }
+  .fase.on { display:block; }
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:22px; box-shadow:0 1px 2px rgba(0,0,0,.04); margin-bottom:16px; }
+  .kicker { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#94a3b8; }
+  .progress { height:6px; background:#e2e8f0; border-radius:999px; margin:10px 0 16px; overflow:hidden; }
+  .progress > div { height:6px; background:#1e293b; border-radius:999px; transition:width .3s; }
+  .row { display:flex; justify-content:space-between; font-size:13px; color:#64748b; font-weight:500; }
+  h3 { margin:4px 0 0; font-size:18px; }
+  .scen { color:#475569; line-height:1.6; margin:10px 0 0; }
+  .q { font-size:14px; font-weight:700; margin:16px 0 8px; }
+  .opts { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+  .opts button { border:2px solid #cbd5e1; background:#fff; color:#334155; border-radius:12px; padding:12px 14px; font-size:13px; font-weight:700; cursor:pointer; text-align:left; font-family:inherit; }
+  .opts button:hover { border-color:#64748b; }
+  .opts button.right { border-color:#10b981; background:#ecfdf5; color:#065f46; }
+  .opts button.wrong { border-color:#f43f5e; background:#fff1f2; color:#9f1239; }
+  .opts button:disabled { cursor:default; }
+  .fb { border-radius:14px; padding:16px; margin-top:14px; font-size:14px; line-height:1.6; }
+  .fb.ok { border:1px solid #a7f3d0; background:#ecfdf5; }
+  .fb.ko { border:1px solid #fecdd3; background:#fff1f2; }
+  .next { background:#1e293b; color:#fff; border:none; border-radius:12px; padding:10px 18px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:14px; }
+  .next.ghost { background:#fff; color:#334155; border:1px solid #cbd5e1; }
+  .note { border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.5; margin-bottom:14px; }
+  .note.sky { border:1px solid #bae6fd; background:#f0f9ff; color:#075985; }
+  .note.amber { border:1px solid #fde68a; background:#fffbeb; color:#78350f; }
+  .grid2 { display:grid; gap:14px; grid-template-columns:1fr 1fr; }
+  @media (max-width:640px){ .grid2{ grid-template-columns:1fr; } }
+  label.lbl { display:block; font-size:13px; font-weight:600; color:#475569; margin:0 0 5px; }
+  input[type=text], select { width:100%; border:1px solid #cbd5e1; border-radius:10px; padding:9px 10px; font-size:13px; font-family:inherit; }
+  input[type=text]:focus, select:focus { outline:none; border-color:#1e293b; }
+  .pills { display:flex; flex-wrap:wrap; gap:8px; }
+  .pill { border:1px solid #cbd5e1; background:#fff; color:#334155; border-radius:10px; padding:8px 12px; font-size:13px; cursor:pointer; user-select:none; }
+  .pill.sel { background:#1e293b; color:#fff; border-color:#1e293b; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chipbox { border:1px solid #cbd5e1; background:#fff; color:#334155; border-radius:10px; padding:8px 12px; font-size:13px; cursor:pointer; user-select:none; }
+  .chipbox.sel { background:#1e293b; color:#fff; border-color:#1e293b; }
+  .chipbox input { display:none; }
+  .pill input { display:none; }
+  .err { color:#e11d48; font-size:13px; font-weight:600; }
+  .big { display:inline-block; background:#1e293b; color:#fff; border:none; border-radius:12px; padding:10px 18px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .big:hover { background:#334155; }
+  .min { background:#fff; color:#475569; border:1px solid #cbd5e1; border-radius:10px; padding:6px 12px; font-size:12px; cursor:pointer; font-family:inherit; }
+  .mini { background:#fff; color:#475569; border:1px solid #cbd5e1; border-radius:10px; padding:6px 12px; font-size:12px; cursor:pointer; font-family:inherit; margin-left:6px; }
+  .mini.warn:hover { color:#e11d48; border-color:#e11d48; }
+  .entries { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+  .entry { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:14px; }
+  .entry .name { font-weight:800; }
+  .entry .info { color:#64748b; font-size:12px; margin:4px 0 8px; }
+  .tag { display:inline-block; background:#f1f5f9; color:#475569; border-radius:999px; padding:2px 8px; font-size:11px; margin:2px 2px 0; }
+  .tag.hot { background:#ffe4e6; color:#9f1239; font-weight:700; }
+  .tag.mid { background:#fef3c7; color:#92400e; font-weight:700; }
+  table.matrix { width:100%; border-collapse:collapse; text-align:center; }
+  table.matrix th { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#64748b; padding:0 4px 8px; font-weight:700; }
+  table.matrix th.rowlab { text-align:left; width:130px; }
+  table.matrix td { padding:4px; }
+  .cell { position:relative; width:100%; border:2px solid transparent; border-radius:12px; padding:16px 6px; cursor:pointer; font-size:24px; font-weight:800; font-family:inherit; }
+  .cell.some { border-color:#94a3b8; }
+  .cell .cnt0 { color:#cbd5e1; }
+  .cell .minus { position:absolute; top:4px; right:8px; font-size:12px; font-weight:400; color:#64748b; }
+  .cell .minus:hover { color:#e11d48; }
+  .r0{background:#ecfdf5}.r1{background:#f7fee7}.r2{background:#fefce8}.r3{background:#ffedd5}.r4{background:#ffe4e6}
+  .stats { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); margin-top:14px; }
+  .stat { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; text-align:center; }
+  .stat .v { font-size:28px; font-weight:800; }
+  .stat .l { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#64748b; font-weight:700; margin-top:2px; }
+  .stat.hot { border-color:#fecdd3; background:#fff1f2; } .stat.hot .v{color:#be123c} .stat.hot .l{color:#be123c}
+  .plenary { background:#1e293b; color:#fff; border-radius:14px; padding:18px; margin-top:14px; }
+  .plenary p { margin:4px 0; font-size:14px; }
+  .plenary .small { color:#94a3b8; font-size:12px; }
+  ul.ciechi { margin:8px 0 0; padding-left:18px; font-size:13px; line-height:1.8; }
+  footer { border-top:1px solid #e2e8f0; background:#fff; padding:18px; text-align:center; font-size:12px; color:#94a3b8; }
+  .hidden { display:none; }
+  textarea.csv { width:100%; height:110px; font-size:11px; border:1px solid #cbd5e1; border-radius:8px; padding:8px; }
+  details summary { cursor:pointer; font-size:13px; font-weight:600; color:#334155; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="chip">Modulo 1 · Esercitazione di gruppo</span><span class="meta">Percorso «L'IA nella Pubblica Amministrazione»</span>
+    <h1>Shadow AI · La mappa dell'ufficio</h1>
+    <p class="sub">Quali strumenti di IA — autorizzati o spontanei — sono già in uso? Con quali account? Per quali attività? Scopriamolo insieme, senza giudicare.</p>
+    <nav>
+      <button id="nav0" class="active" onclick="showFase(0)"><span class="n">1 · Detective</span><span class="t">≈ 8′ · Riconoscete la Shadow AI negli scenari altrui</span></button>
+      <button id="nav1" onclick="showFase(1)"><span class="n">2 · Censimento</span><span class="t">≈ 15′ · La mappa degli strumenti del vostro ufficio</span></button>
+      <button id="nav2" onclick="showFase(2)"><span class="n">3 · Termografia</span><span class="t">≈ 7′ · La fotografia a rischio dell'ufficio</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- FASE 1 · DETECTIVE -->
+  <section id="fase0" class="fase on">
+    <div id="quiz"></div>
+  </section>
+
+  <!-- FASE 2 · CENSIMENTO -->
+  <section id="fase1" class="fase">
+    <div class="note sky">🔒 <b>Nessun dato lascia questo dispositivo.</b> Nessun nome richiesto: il censimento è anonimo per costruzione (ufficio/area sì, persone no). L'export CSV serve alla restituzione in plenaria e all'RTD.</div>
+
+    <div class="card">
+      <p class="q" style="margin-top:0">Uno strumento alla volta: raccontate cosa circola già nell'ufficio.</p>
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="f_strumento">Nome dello strumento *</label>
+          <input type="text" id="f_strumento" list="strumenti" placeholder="es. ChatGPT, Gemini, un'app di trascrizione…" />
+          <datalist id="strumenti">
+            <option value="ChatGPT"></option><option value="Gemini"></option><option value="Copilot"></option>
+            <option value="Claude"></option><option value="NotebookLM"></option><option value="Perplexity"></option>
+            <option value="Traduttore online"></option><option value="App di trascrizione"></option><option value="Estensione browser"></option>
+          </datalist>
+        </div>
+        <div>
+          <label class="lbl" for="f_canale">Canale</label>
+          <select id="f_canale">
+            <option>Chatbot web (ChatGPT, Gemini, Copilot…)</option>
+            <option>Estensione / plugin del browser</option>
+            <option>Funzione IA della suite office</option>
+            <option>App mobile (trascrizione, foto, traduzione)</option>
+            <option>Assistente interno dell'ente (RAG)</option>
+            <option>Altro</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="lbl" style="margin-top:16px">Con quale account? *</p>
+      <div class="pills" id="f_account">
+        <span class="pill" data-v="Account istituzionale" onclick="pickAccount(this)">Account istituzionale</span>
+        <span class="pill" data-v="Account personale" onclick="pickAccount(this)">Account personale</span>
+        <span class="pill" data-v="Non so" onclick="pickAccount(this)">Non so</span>
+      </div>
+
+      <p class="lbl" style="margin-top:16px">Per quali attività? *</p>
+      <div class="chips" id="f_attivita">
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Sintesi di documenti</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Bozze di testi o email</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Traduzione</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Semplificazione del linguaggio</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Trascrizione di riunioni</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Immagini e foto</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Ricerca di informazioni</span>
+        <span class="chipbox" onclick="this.classList.toggle('sel')">Dati e tabelle</span>
+      </div>
+
+      <p class="lbl" style="margin-top:16px">Che dati tocca? (più risposte possibili)</p>
+      <div class="chips" id="f_dati">
+        <span class="chipbox" data-k="pub" onclick="this.classList.toggle('sel')">Solo contenuti pubblici o aggregati</span>
+        <span class="chipbox" data-k="per" onclick="this.classList.toggle('sel')">Dati personali</span>
+        <span class="chipbox" data-k="sen" onclick="this.classList.toggle('sel')">Dati sensibili (sanità, giustizia) o atti riservati</span>
+      </div>
+
+      <div class="grid2" style="margin-top:16px">
+        <div>
+          <label class="lbl" for="f_freq">Frequenza</label>
+          <select id="f_freq">
+            <option>Quotidiana</option>
+            <option selected>Settimanale</option>
+            <option>Occasionale</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl" for="f_ufficio">Ufficio / area (opzionale, niente nomi)</label>
+          <input type="text" id="f_ufficio" placeholder="es. Urbanistica, Segreteria…" />
+        </div>
+      </div>
+
+      <p class="err hidden" id="f_err"></p>
+      <button class="big" style="margin-top:14px" onclick="addEntry()">+ Aggiungi alla mappa</button>
+    </div>
+
+    <div id="listaWrap" class="hidden">
+      <div class="row" style="margin-bottom:10px">
+        <span class="q" style="margin:0">Strumenti censiti: <b id="nEnt">0</b></span>
+        <span>
+          <button class="min" style="color:#047857;border-color:#10b981" onclick="exportCSV()">⬇ Esporta CSV</button>
+          <button class="mini warn" onclick="resetAll()">Svuota</button>
+        </span>
+      </div>
+      <div class="entries" id="lista"></div>
+      <button class="big" style="margin-top:16px" onclick="showFase(2)">Vai alla Termografia →</button>
+    </div>
+  </section>
+
+  <!-- FASE 3 · TERMOGRAFIA -->
+  <section id="fase2" class="fase">
+    <div class="note">Ogni scheda del censimento viene posizionata automaticamente nella matrice. In plenaria potete aggiungere usi a mano: <b>cliccate una cella per aggiungere +1</b>, usate il piccolo «–» per correggere. Zone colorate = livello di attenzione della combinazione.</div>
+    <div class="card" style="overflow-x:auto">
+      <table class="matrix">
+        <thead>
+          <tr><th></th><th>Account personale</th><th>Non so</th><th>Account istituzionale</th></tr>
+        </thead>
+        <tbody id="mbody"></tbody>
+      </table>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="sTot">0</div><div class="l">usi mappati</div></div>
+      <div class="stat hot"><div class="v" id="sRoss">0</div><div class="l">in zona di attenzione</div></div>
+      <div class="stat"><div class="v" id="sPerc">0%</div><div class="l">quota da governare</div></div>
+    </div>
+    <div class="plenary">
+      <p style="font-weight:700;margin-top:0">Domanda per la plenaria</p>
+      <p>Guardando la mappa: da quale quadrato vogliamo uscire per primi? E quale uso verde vogliamo valorizzare, invece di lasciarlo nell'ombra?</p>
+      <p class="small">Ricorda per il ponte alla Giornata 3: zona rossa ≠ colpa — è l'elenco delle priorità per il regolamento interno della Giornata 5.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>Nessun dato lascia questo dispositivo · Censimento anonimo per costruzione · Percorso operativo per l'uso consapevole, sicuro e governato dell'IA generativa</footer>
+
+<script>
+// ─────────────────── DATI ───────────────────
+var CASI = [
+  { t:"Il traduttore veloce",
+    x:"Per preparare la risposta a un'istanza, un dipendente incolla il testo in un traduttore online gratuito: contiene nome, codice fiscale e dati sanitari del cittadino.",
+    r:"alto",
+    p:"Strumento non autorizzato + dati personali e sensibili che escono dal perimetro dell'ente: è il binario del rischio GDPR (art. 32). E ricorda: «ho tolto il nome» non basta — la pseudonimizzazione non è anonimizzazione." },
+  { t:"L'estensione del browser",
+    x:"Un collega ha installato un'estensione che «riassume le email e aiuta a scrivere» sul PC d'ufficio, per provarla. L'ICT non ne sa nulla.",
+    r:"shadow",
+    p:"I plugin non verificati sono uno dei canali tipici della Shadow AI: leggono la posta di lavoro e la trattano su infrastrutture che l'ente non governa. Spesso lo si fa in buona fede: è esattamente il punto." },
+  { t:"La risposta intelligente della suite",
+    x:"La suite office dell'ente ha funzioni IA già incluse nel contratto (risposte suggerite, riassunti). Un ufficio le attiva in autonomia, senza passare dall'ICT.",
+    r:"shadow",
+    p:"È il canale più invisibile: sembra «già autorizzato perché nel contratto», ma senza verifica di configurazione e trattamento l'uso non è governato. Le domande restano sempre tre: chi la autorizza? Cosa legge? Dove vanno i dati?" },
+  { t:"L'assistente interno",
+    x:"Un funzionario interroga l'assistente dell'ente basato su RAG: risponde solo sulle circolari aggiornate dell'ente, con account istituzionale e citazioni verificabili.",
+    r:"governato",
+    p:"Fonti interne validate, account istituzionale, tracciabilità: è l'IA governata dalla PA. Restano due doveri: verificare sempre l'output e dichiarare l'uso dell'IA quando è rilevante per il procedimento." },
+  { t:"La trascrizione della riunione",
+    x:"Una dipendente registra il collegio con un'app gratuita sul telefono personale, fa generare il verbale dall'IA e lo incolla nella bozza ufficiale.",
+    r:"alto",
+    p:"App non autorizzata, account personale, dati personali dei partecipanti e contenuti riservati della riunione: uno dei casi più frequenti e più sottovalutati. La comodità è massima, il perimetro è zero." },
+  { t:"Il conto Plus del dirigente",
+    x:"Un dirigente usa il proprio abbonamento personale per la prima bozza di una determina: «tanto il modello è lo stesso di quello aziendale».",
+    r:"alto",
+    p:"Non è lo stesso: fuori dal perimetro non ci sono controllo, contratto, log né condizioni sul trattamento. E una determina è un atto con valore legale: per la L. 132/2025 la responsabilità resta alla persona che firma." },
+  { t:"Il brainstorming istituzionale",
+    x:"L'ufficio comunicazione usa lo strumento autorizzato dall'ente, con account istituzionale, per generare idee e titoli di una campagna: nessun dato personale nei prompt.",
+    r:"governato",
+    p:"Compito generico, strumento autorizzato, dati puliti: è un uso ammesso. Buona pratica in più: dichiarare l'uso dell'IA se il contenuto diventa pubblico." },
+  { t:"Lo scatto dal cellulare",
+    x:"Un dipendente fotografa con l'app IA del telefono personale il cartellone con i monitoraggi dell'ufficio e le chiede una sintesi per la riunione.",
+    r:"shadow",
+    p:"Anche «un solo scatto» sposta dati di lavoro su un servizio personale: il confine non è il tipo di attività, ma il perimetro — dispositivo e account dell'ente." }
+];
+
+var OPZ = [
+  { k:"governato", l:"✅ Uso governato" },
+  { k:"shadow",    l:"⚠️ Shadow AI" },
+  { k:"alto",      l:"🚨 Shadow AI ad alto rischio" }
+];
+
+var PUNTI_CIECHI = [
+  "Estensioni e plugin del browser",
+  "Funzioni IA integrate nella suite office",
+  "App di trascrizione delle riunioni",
+  "Traduttori online",
+  "Foto e riconoscimento dal cellulare personale",
+  "Abbonamenti personali («tanto il modello è lo stesso»)"
+];
+
+var DATI_LABEL = { pub:"Solo contenuti pubblici o aggregati", per:"Dati personali", sen:"Dati sensibili (sanità, giustizia) o atti riservati" };
+var RIGHE  = [ {k:"sen",l:"Dati sensibili o riservati"}, {k:"per",l:"Dati personali"}, {k:"pub",l:"Contenuti pubblici / aggregati"} ];
+var COLS   = [ {k:"per",l:"Account personale"}, {k:"nso",l:"Non so"}, {k:"ist",l:"Account istituzionale"} ];
+var ROWC = { sen:2, per:1, pub:0 }, COLC = { per:2, nso:1, ist:0 };
+var RISCHIO_CLS = ["r0","r1","r2","r3","r4"];
+
+// ─────────────────── NAVIGAZIONE ───────────────────
+function showFase(i){
+  for (var j=0;j<3;j++){
+    document.getElementById("fase"+j).classList.toggle("on", j===i);
+    document.getElementById("nav"+j).classList.toggle("active", j===i);
+  }
+  if (i===2) renderMatrix();
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+// ─────────────────── FASE 1 · QUIZ ───────────────────
+var qi = 0, qScelta = null, qOk = 0;
+
+function renderQuiz(){
+  var box = document.getElementById("quiz");
+  var caso = CASI[qi];
+  var html = '<div class="row"><span>Caso ' + (qi+1) + ' di ' + CASI.length + '</span><span>Indizi corretti: ' + qOk + '</span></div>';
+  html += '<div class="progress"><div style="width:' + ((qi + (qScelta?1:0)) / CASI.length * 100) + '%"></div></div>';
+  html += '<div class="card"><div class="kicker">Scenario</div><h3>' + caso.t + '</h3><p class="scen">' + caso.x + '</p></div>';
+  html += '<p class="q">Come lo classifichereste questo uso?</p><div class="opts">';
+  OPZ.forEach(function(o){
+    var cls = "";
+    if (qScelta !== null){
+      if (o.k === caso.r) cls = "right";
+      else if (o.k === qScelta) cls = "wrong";
+    }
+    html += '<button ' + (qScelta!==null?"disabled ":"") + 'class="' + cls + '" onclick="rispondi(\'' + o.k + '\')">' + o.l + '</button>';
+  });
+  html += '</div>';
+  if (qScelta !== null){
+    var giusto = qScelta === caso.r;
+    html += '<div class="fb ' + (giusto?"ok":"ko") + '"><b>' + (giusto?"✅ Esatto.":"🚨 Non esattamente.") + '</b><br>' + caso.p + '</div>';
+    html += '<button class="next" onclick="nextCase()">' + (qi+1>=CASI.length ? "Vedi il risultato" : "Caso successivo →") + '</button>';
+  }
+  box.innerHTML = html;
+}
+
+function rispondi(k){
+  if (qScelta !== null) return;
+  qScelta = k;
+  if (k === CASI[qi].r) qOk++;
+  renderQuiz();
+}
+
+function nextCase(){
+  if (qi+1 >= CASI.length){ renderFine(); return; }
+  qi++; qScelta = null; renderQuiz();
+}
+
+function renderFine(){
+  var msg = qOk>=7 ? "Occhio da detective. Pochi punti ciechi residui."
+          : qOk>=4 ? "Buon occhio, ma qualche canale di Shadow AI vi era sfuggito: perfetto, è il motivo dell'esercizio."
+          : "Molti canali invisibili in agguato: benvenuti nella parte più utile della giornata.";
+  var html = '<div class="card"><div class="kicker">Risultato del detective</div>' +
+    '<p style="font-size:34px;font-weight:800;margin:6px 0">' + qOk + ' / ' + CASI.length + '</p>' +
+    '<p class="scen" style="margin:0">' + msg + '</p></div>';
+  html += '<div class="note amber"><b>🔍 I punti ciechi più comuni degli uffici pubblici</b><ul class="ciechi">';
+  PUNTI_CIECHI.forEach(function(p){ html += '<li>' + p + '</li>'; });
+  html += '</ul><p style="font-size:13px;font-style:italic;margin:10px 0 0">Domanda per l\'aula: quanti di questi canali erano già entrati nel vostro ufficio?</p></div>';
+  html += '<button class="next ghost" onclick="restartQuiz()">↻ Ricomincia</button> ';
+  html += '<button class="next" onclick="showFase(1)">Vai al Censimento →</button>';
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function restartQuiz(){ qi=0; qScelta=null; qOk=0; renderQuiz(); }
+
+// ─────────────────── FASE 2 · CENSIMENTO ───────────────────
+var LS_KEY = "shadowai_censimento_v1";
+var entries = [];
+try { entries = JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch(e){ entries = []; }
+var account = null;
+
+function saveLS(){ try { localStorage.setItem(LS_KEY, JSON.stringify(entries)); } catch(e){} }
+
+function pickAccount(el){
+  account = el.getAttribute("data-v");
+  var all = document.getElementById("f_account").getElementsByClassName("pill");
+  for (var i=0;i<all.length;i++) all[i].classList.remove("sel");
+  el.classList.add("sel");
+}
+
+function selected(id){
+  var out = [], els = document.querySelectorAll("#" + id + " .chipbox.sel");
+  for (var i=0;i<els.length;i++){
+    out.push(els[i].getAttribute("data-k") ? els[i].getAttribute("data-k") : els[i].textContent);
+  }
+  return out;
+}
+
+function addEntry(){
+  var nome = document.getElementById("f_strumento").value.trim();
+  var att = selected("f_attivita");
+  var dat = selected("f_dati");
+  var err = document.getElementById("f_err");
+  if (!nome){ err.textContent = "Indicate almeno il nome dello strumento."; err.classList.remove("hidden"); return; }
+  if (!account){ err.textContent = "Indicate il tipo di account (potete rispondere «non so»)."; err.classList.remove("hidden"); return; }
+  if (att.length === 0){ err.textContent = "Selezionate almeno un'attività."; err.classList.remove("hidden"); return; }
+  err.classList.add("hidden");
+  entries.push({
+    id: Date.now(), strumento: nome,
+    canale: document.getElementById("f_canale").value,
+    account: account, attivita: att,
+    datiKeys: dat.length ? dat : ["pub"],
+    freq: document.getElementById("f_freq").value,
+    ufficio: document.getElementById("f_ufficio").value.trim()
+  });
+  saveLS();
+  document.getElementById("f_strumento").value = "";
+  document.getElementById("f_ufficio").value = "";
+  var els = document.querySelectorAll("#f_attivita .chipbox.sel, #f_dati .chipbox.sel");
+  for (var i=0;i<els.length;i++) els[i].classList.remove("sel");
+  account = null;
+  var pills = document.getElementById("f_account").getElementsByClassName("pill");
+  for (var j=0;j<pills.length;j++) pills[j].classList.remove("sel");
+  renderEntries();
+}
+
+function delEntry(id){
+  entries = entries.filter(function(e){ return e.id !== id; });
+  saveLS(); renderEntries();
+}
+
+function resetAll(){
+  if (!confirm("Svuotare tutto il censimento?")) return;
+  entries = []; saveLS(); renderEntries();
+}
+
+function renderEntries(){
+  document.getElementById("listaWrap").classList.toggle("hidden", entries.length===0);
+  document.getElementById("nEnt").textContent = entries.length;
+  var html = "";
+  entries.forEach(function(e){
+    html += '<div class="entry"><div style="display:flex;justify-content:space-between"><span class="name">' + escHtml(e.strumento) + '</span>' +
+      '<button class="mini warn" onclick="delEntry(' + e.id + ')">✕</button></div>';
+    html += '<div class="info">' + escHtml(e.canale) + ' · ' + e.account + ' · ' + e.freq.toLowerCase() + '</div><div>';
+    e.attivita.forEach(function(a){ html += '<span class="tag">' + escHtml(a) + '</span>'; });
+    if (e.datiKeys.indexOf("sen")>-1) html += '<span class="tag hot">dati sensibili</span>';
+    else if (e.datiKeys.indexOf("per")>-1) html += '<span class="tag mid">dati personali</span>';
+    html += '</div></div>';
+  });
+  document.getElementById("lista").innerHTML = html;
+  renderMatrix();
+}
+
+function exportCSV(){
+  var head = ["Strumento","Canale","Account","Attività","Dati","Frequenza","Ufficio"];
+  var rows = [head.map(csvq).join(";")];
+  entries.forEach(function(e){
+    rows.push([e.strumento, e.canale, e.account, e.attivita.join(", "),
+      e.datiKeys.map(function(k){ return DATI_LABEL[k]; }).join(", "),
+      e.freq, e.ufficio || ""].map(csvq).join(";"));
+  });
+  var csv = "\uFEFF" + rows.join("\r\n");
+  try {
+    var blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "censimento-shadow-ai.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } catch(err){
+    var w = window.open("", "_blank");
+    if (w) w.document.write("<pre>" + csv.replace(/</g,"&lt;") + "</pre>");
+  }
+}
+
+function csvq(s){ return '"' + String(s).replace(/"/g,'""') + '"'; }
+function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+// ─────────────────── FASE 3 · TERMOGRAFIA ───────────────────
+var manual = [0,0,0,0,0,0,0,0,0];
+
+function cellIdx(rk, ck){
+  var ri = RIGHE.findIndex(function(r){ return r.k===rk; });
+  var ci = COLS.findIndex(function(c){ return c.k===ck; });
+  return ri*3+ci;
+}
+
+function autoCounts(){
+  var auto = [0,0,0,0,0,0,0,0,0];
+  entries.forEach(function(e){
+    var ck = e.account === "Account istituzionale" ? "ist" : e.account === "Non so" ? "nso" : "per";
+    var rk = e.datiKeys.indexOf("sen")>-1 ? "sen" : e.datiKeys.indexOf("per")>-1 ? "per" : "pub";
+    auto[cellIdx(rk, ck)]++;
+  });
+  return auto;
+}
+
+function renderMatrix(){
+  var auto = autoCounts();
+  var html = "";
+  RIGHE.forEach(function(r){
+    html += "<tr><th class='rowlab'>" + r.l + "</th>";
+    COLS.forEach(function(c){
+      var i = cellIdx(r.k, c.k);
+      var n = auto[i] + manual[i];
+      var rischio = ROWC[r.k] + COLC[c.k];
+      html += "<td><button class='cell " + RISCHIO_CLS[rischio] + (n>0?" some":"") + "' onclick='manAdd(" + i + ")'>" +
+        "<span class='" + (n>0?"":"cnt0") + "'>" + n + "</span>" +
+        (manual[i]>0 ? "<span class='minus' onclick='event.stopPropagation();manSub(" + i + ")'>–</span>" : "") +
+        "</button></td>";
+    });
+    html += "</tr>";
+  });
+  document.getElementById("mbody").innerHTML = html;
+  var tot = 0, rossa = 0;
+  for (var i=0;i<9;i++){
+    var n = auto[i] + manual[i];
+    tot += n;
+    var row = Math.floor(i/3);
+    if ((i%3 < 2) && row < 2) rossa += n; // account personale o "non so" × dati personali o sensibili
+  }
+  document.getElementById("sTot").textContent = tot;
+  document.getElementById("sRoss").textContent = rossa;
+  document.getElementById("sPerc").textContent = (tot>0 ? Math.round(rossa/tot*100) : 0) + "%";
+}
+
+function manAdd(i){ manual[i]++; renderMatrix(); }
+function manSub(i){ if (manual[i]>0) manual[i]--; renderMatrix(); }
+
+// ─────────────────── AVVIO ───────────────────
+renderQuiz();
+renderEntries();
+renderMatrix();
+</script>
+</body>
+</html>
