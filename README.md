@@ -2,6 +2,8 @@
 
 > **Esercitazione interattiva per la Giornata 1 del percorso formativo "L'intelligenza artificiale nella Pubblica Amministrazione".**
 > Un'unica web-app in tre fasi per mappare — senza giudicare — gli strumenti di IA già in uso negli uffici pubblici: autorizzati o spontanei, con quali account, per quali attività.
+
+---
 <img width="1120" height="628" alt="Screenshot 2026-10-24 alle 23 13 15" src="https://github.com/user-attachments/assets/b405261f-d66d-4a4d-92c2-20af37b0b946" />
 
 
