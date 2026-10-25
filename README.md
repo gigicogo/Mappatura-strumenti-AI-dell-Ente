@@ -7,7 +7,7 @@
 <img width="1120" height="628" alt="Screenshot 2026-10-24 alle 23 13 15" src="https://github.com/user-attachments/assets/b405261f-d66d-4a4d-92c2-20af37b0b946" />
 
 
-🔗 **Demo online:** *https://gigicogo.github.io/Mappatura-strumenti-AI-dell-Ente/ *
+🔗 **Demo online:** https://gigicogo.github.io/Mappatura-strumenti-AI-dell-Ente/
 
 ---
 
