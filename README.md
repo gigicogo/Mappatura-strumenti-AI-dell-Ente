@@ -31,7 +31,7 @@ Un singolo file HTML, senza backend né installazioni, pensato per l'esercitazio
 
 ### Online
 
-Il file è completamente statico e autocontenuto: può essere pubblicato gratuitamente su **GitHub Pages**, **Netlify** o qualunque hosting statico (vedi sotto), oppure semplicemente condiviso via canale interno dell'ente.
+Il file è completamente statico e autocontenuto: ed è già stato pubblicato su **GitHub Pages**, **Netlify** o qualunque hosting statico, oppure semplicemente condiviso via canale interno dell'ente.
 
 ## 🔒 Privacy e protezione dei dati
 
@@ -52,15 +52,6 @@ L'app è progettata per l'uso in un ente pubblico, quindi:
 
 Non serve build, npm, né alcuno strumento: solo un browser.
 
-## 🌐 Pubblicazione gratuita (GitHub Pages)
-
-1. Fai il fork o crea il repository e carica `index.html`.
-2. Vai su **Settings → Pages**.
-3. Sotto *Build and deployment*, seleziona il branch (`main`) e la cartella (`/root`), poi **Save**.
-4. Dopo qualche minuto l'app sarà online su `https://<tuo-username>.github.io/<repo>/`.
-
-Netlify (free) è un'alternativa valida: trascina il file e ottieni un link immediato.
-
 ## 📐 Come è costruita l'esercitazione
 
 L'app segue i contenuti del Modulo 1 del percorso:
@@ -79,15 +70,15 @@ Tutto il contenuto è in chiaro dentro `index.html`:
 - **attività e canali del censimento**: markup delle sezioni corrispondenti;
 - **colori e testi**: CSS inline e stringhe leggibili nel blocco `<script>`.
 
-Se adatti l'app al tuo ente, ricorda la regola d'ingaggio del corso: tutto ciò che produce l'IA (e anche questo esercizio, nel caso lo usi per raccogliere dati) resta materiale di lavoro — la valutazione e le decisioni restano sempre alle persone.
+Se adatti l'app al tuo ente, ricorda la regola d'ingaggio del corso: tutto ciò che produce l'IA (e anche questo esercizio, nel caso lo usi per raccogliere dati) resta materiale di lavoro. La valutazione e le decisioni restano sempre alle persone.
 
 ## 📄 Licenza
 
-Da definire: si suggerisce una licenza aperta (es. MIT o CC BY 4.0) per favorire il riuso da parte di altri enti. Sostituisci questo paragrafo con il testo della licenza scelta e il file `LICENSE` del repo.
+Da definire: si suggerisce una licenza aperta (es. MIT o CC BY 4.0) per favorire il riuso da parte di altri formatori o altri enti. Sostituisci questo paragrafo con il testo della licenza scelta e il file `LICENSE` del repo.
 
 ## 👤 Autore e contesto
 
-**Gianluigi Cogo** — consulente e docente sui temi dell'IA generativa nella Pubblica Amministrazione.
+**Gianluigi Cogo** Content creator e technical writer interessato ad AI generativa, automazioni, viaggi e strumenti digitali. Consulente e docente sui temi dell'IA generativa nella Pubblica Amministrazione.
 
 L'app nasce come esercitazione della **Giornata 1** del percorso operativo *"L'IA nella Pubblica Amministrazione — Percorso operativo per l'uso consapevole, sicuro e governato dell'IA generativa"* (20 ore: percorso base per funzionari ed esecutori + modulo governance per direttori e dirigenti).
 
