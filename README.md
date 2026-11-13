@@ -47,7 +47,7 @@ L'app è progettata per l'uso in un ente pubblico, quindi:
 ```text
 ├── index.html    # l'app completa (HTML + CSS + JS inline, zero dipendenze)
 ├── README.md     # questo file
-└── LICENSE       # licenza (da scegliere)
+└── LICENSE       # licenza MIT per il codice
 ```
 
 Non serve build, npm, né alcuno strumento: solo un browser.
@@ -72,13 +72,19 @@ Tutto il contenuto è in chiaro dentro `index.html`:
 
 Se adatti l'app al tuo ente, ricorda la regola d'ingaggio del corso: tutto ciò che produce l'IA (e anche questo esercizio, nel caso lo usi per raccogliere dati) resta materiale di lavoro. La valutazione e le decisioni restano sempre alle persone.
 
-## 📄 Licenza
+---
 
-Da definire: si suggerisce una licenza aperta (es. MIT o CC BY 4.0) per favorire il riuso da parte di altri formatori o altri enti. Sostituisci questo paragrafo con il testo della licenza scelta e il file `LICENSE` del repo.
+## 📄 Licenza e riuso
+
+Puoi usare, copiare, modificare e condividere questo progetto, anche per attività formative, professionali e commerciali, senza chiedere un’autorizzazione preventiva.
+
+Salvo diversa indicazione, il codice è distribuito con licenza [MIT](https://opensource.org/license/mit), mentre i testi e i materiali didattici sono distribuiti con licenza [Creative Commons Attribuzione 4.0 Internazionale](https://creativecommons.org/licenses/by/4.0/deed.it).
+
+Nel riuso, conserva gli avvisi previsti dalla licenza MIT; per testi e materiali didattici, cita **Gianluigi Cogo**, inserisci un collegamento al progetto originale e alla licenza e indica eventuali modifiche. Gli eventuali materiali di terzi mantengono le rispettive licenze.
 
 ## 👤 Autore e contesto
 
-**Gianluigi Cogo** Content creator e technical writer interessato ad AI generativa, automazioni, viaggi e strumenti digitali. Consulente e docente sui temi dell'IA generativa dell'Innovazione e della comunicazione.
+**Gianluigi Cogo** — Content creator e technical writer interessato ad AI generativa, automazioni, viaggi e strumenti digitali. Consulente e docente sui temi dell’IA generativa, dell’innovazione e della comunicazione.
 
 - 📮 Newsletter: [gigicogo.substack.com](https://gigicogo.substack.com)
 - 📝 Blog: [medium.com/webeconoscenza](https://medium.com/webeconoscenza)
